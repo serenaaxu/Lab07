@@ -27,3 +27,4 @@ class Model:
         """ Restituisce la lista di tutti i musei."""
         # TODO
 
+

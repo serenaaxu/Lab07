@@ -37,7 +37,26 @@ class View:
 
         # --- Sezione 2: Filtraggio ---
         # TODO
+        self._dd_musei = ft.Dropdown(label="Musei",
+                                     options=[ft.dropdown.Option(1,"Museo Egizio"),
+                                              ft.dropdown.Option(2,"Museo Nazionale del Cinema"),
+                                              ft.dropdown.Option(2, "Museo d’Arte Orientale (MAO)"),
+                                              ft.dropdown.Option(2, "GAM - Galleria Civica d’Arte Moderna e Contemporanea"),
+                                              ft.dropdown.Option(2, "Museo Nazionale dell’Automobile"),
+                                              ft.dropdown.Option(2, "Museo Nazionale del Risorgimento Italiano"),
+                                              ft.dropdown.Option(2, "Museo della Montagna Duca degli Abruzzi"),
+                                              ft.dropdown.Option(2, "Museo Pietro Micca e dell’Assedio di Torino del 1706"),
+                                              ft.dropdown.Option(2, "Museo di Anatomia Umana Luigi Rolando"),
+                                              ft.dropdown.Option(2, "Museo di Antropologia Criminale Cesare Lombroso"),
+                                              ft.dropdown.Option(2, "Pinacoteca dell’Accademia Albertina"),
+                                              ft.dropdown.Option(2, "Museo della Sindone"),
+                                              ft.dropdown.Option(2, "Museo Ferroviario Piemontese"),
+                                              ],
+                                     width = 300,
+                                     hint_text = "Seleziona Museo")
 
+        self._dd_epoca = ft.Dropdown(label="Epoca",
+                                     options=[ft.dropdown.Option(1,"Epoca"),])
         # Sezione 3: Artefatti
         # TODO
 
@@ -54,6 +73,7 @@ class View:
 
             # Sezione 2: Filtraggio
             # TODO
+            ft.Row(controls = [self._dd_musei, self._dd_epoca], alignment = ft.MainAxisAlignment.CENTER)
 
             # Sezione 3: Artefatti
             # TODO
