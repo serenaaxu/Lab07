@@ -21,14 +21,6 @@ class View:
         # Controller
         self.controller = None
 
-        ###
-        self._dd_musei = None
-        self._dd_epoca = None
-        self._btn_mostra_artefatti = None
-        self._lv_risultati = None
-        self.txt_titolo = None
-        self.toggle_cambia_tema = None
-
     def show_alert(self, messaggio):
         self.alert.show_alert(messaggio)
 
@@ -48,44 +40,33 @@ class View:
         self._dd_musei = ft.Dropdown(
             label = "Museo",
             hint_text = "Seleziona un museo",
-            options = [ft.dropdown.Option(key=None, text="Nessun filtro")],
+            options = self.controller.popola_dropdown_musei(),
+            on_change = self.controller.aggiorna_nome_museo,
             width = 350,
             value = None
         )
         self._dd_epoca = ft.Dropdown(
             label = "Epoca",
             hint_text = "Seleziona un'epoca'",
-            options = [ft.dropdown.Option(key=None, text="Nessun Filtro")],
+            options = self.controller.popola_dropdown_epoche(),
+            on_change = self.controller.aggiorna_epoca,
             width = 350,
             value = None
         )
 
         # Sezione 3: Artefatti
         # TODO
-        self._btn_mostra_artefatti = ft.ElevatedButton(
+        self.btn_mostra_artefatti = ft.ElevatedButton(
             text = "Mostra Artefatti",
+            width = 200,
             on_click = self.controller.handle_mostra_artefatti,
-            # icon = ft.icons.SEARCH
         )
 
-        self._lv_risultati = ft.ListView(
-            expand = 1,
+        self.lista_risultati_ricerca = ft.ListView(
+            expand = True,
             spacing = 10,
             padding = 20,
-            auto_scroll = True
         )
-
-        container_risultati = ft.Container(
-            content=self._lv_risultati,
-            border=ft.border.all(1, "grey"),
-            border_radius=ft.border_radius.all(5),
-            height=400,
-            padding=10
-        )
-
-
-
-
 
         # --- Toggle Tema ---
         self.toggle_cambia_tema = ft.Switch(label="Tema scuro", value=True, on_change=self.cambia_tema)
@@ -105,7 +86,10 @@ class View:
 
             # Sezione 3: Artefatti
             # TODO
-            ft.Row(controls = [self._btn_mostra_artefatti], alignment = ft.MainAxisAlignment.CENTER), container_risultati
+            self.btn_mostra_artefatti,
+            ft.Divider(),
+
+            self.lista_risultati_ricerca,
             )
 
         self.page.scroll = "adaptive"
@@ -116,49 +100,4 @@ class View:
         self.page.theme_mode = ft.ThemeMode.DARK if self.toggle_cambia_tema.value else ft.ThemeMode.LIGHT
         self.toggle_cambia_tema.label = "Tema scuro" if self.toggle_cambia_tema.value else "Tema chiaro"
         self.page.update()
-
-
-
-    ###
-    def popola_dd_museo(self, musei):
-        self._dd_musei.options.clear()
-        self._dd_musei.options.append(ft.dropdown.Option(key=None, text="Nessun filtro"))
-        for museo in musei:
-            self._dd_musei.options.append(
-                ft.dropdown.Option(
-                    key=museo.id_museo,  # La chiave è l'ID
-                    text=museo.nome  # Il testo è il nome
-                )
-            )
-        self.update()
-
-    def popola_dd_epoca(self, epoche):
-        self._dd_epoca.options.clear()
-        self._dd_epoca.options.append(ft.dropdown.Option(key=None, text="Nessun filtro"))
-        for epoca in epoche:
-            self._dd_epoca.options.append(
-                ft.dropdown.Option(
-                    key=epoca,  # Sia chiave che testo sono la stringa 'epoca'
-                    text=epoca
-                )
-            )
-        self.update()
-
-    def aggiorna_risultati(self, artefatti):
-        self._lv_risultati.controls.clear()
-        if not artefatti:
-            self._lv_risultati.controls.append(ft.Text("Nessun artefatto trovato."))
-        else:
-            self._lv_risultati.controls.append(
-                ft.Text(f"Trovati {len(artefatti)} artefatti:", weight=ft.FontWeight.BOLD))
-            for artefatto in artefatti:
-                # Recupero il nome del museo tramite il controller
-                museo = self.controller.get_museo_by_id(artefatto.id_museo)
-                nome_museo = museo.nome if museo else "Museo Sconosciuto"
-
-                self._lv_risultati.controls.append(
-                    ft.Text(f"[{artefatto.epoca}] {artefatto.nome} - {nome_museo}")
-                )
-        self.update()
-
 

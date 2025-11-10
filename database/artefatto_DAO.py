@@ -11,58 +11,82 @@ class ArtefattoDAO:
         pass
 
     # TODO
-    def get_all_epoche(self):
+    @staticmethod
+    def leggi_epoche():
+        results = []
         cnx = ConnessioneDB.get_connection()
-        result = []
+
         if cnx is None:
             print("Errore nella connessione al database")
-            return result
-
-        cursor = cnx.cursor()
-        query = "SELECT DISTINCT epoca FROM artefatto ORDER BY epoca"
-        try:
+            return None
+        else:
+            cursor = cnx.cursor(dictionary=True)
+            query = ("SELECT DISTINCT epoca "
+                     "FROM artefatto")
             cursor.execute(query)
-            for (epoca,) in cursor.fetchall():
-                result.append(epoca)
-        except Exception as e:
-            print(f"Errore durante l'esecuzione della query: {e}")
-        finally:
+            for row in cursor:
+                epoca = row["epoca"]
+                results.append(epoca)
             cursor.close()
             cnx.close()
-        return result
+            return results
 
-    def get_filtered_artefatti(self, id_museo, epoca):
+    @staticmethod
+    def trova_artefatti(museo:str, epoca:str):
+        results = []
         cnx = ConnessioneDB.get_connection()
-        result = []
+
         if cnx is None:
             print("Errore nella connessione al database")
-            return result
+            return None
+        else:
+            cursor = cnx.cursor(dictionary=True)
 
-        cursor = cnx.cursor(dictionary=True)
-        query = (" SELECT a.id AS id_artefatto,"
-                 " a.nome, "
-                 " a.epoca, "
-                 " a.id_museo"
-                 " FROM artefatto a"
-                 " WHERE a.id_museo = COALESCE(%s, a.id_museo)"
-                 " AND a.epoca = COALESCE(%s, a.epoca)"
-                 " ORDER BY a.epoca, a.nome")
+            if museo == epoca == "Nessun Filtro":
+                query = "SELECT * FROM artefatto"
+                cursor.execute(query)
+                for row in cursor:
+                    artefatto = row["nome"]
+                    results.append(artefatto)
+                cursor.close()
+                cnx.close()
+                return results
 
-        try:
-            cursor.execute(query, (id_museo, epoca))
-            for row in cursor.fetchall():
-                result.append(Artefatto(
-                    row['nome'],
-                    row['tipologia'],
-                    row['epoca'],
-                    row['id_museo'],
-                 ))
-        except Exception as e:
-            print(f"Errore durante la query: {e}")
-        finally:
-            cursor.close()
-            cnx.close()
-        return result
+            elif museo == "Nessun Filtro":
+                query = ("SELECT a.nome "
+                         "FROM artefatto a, museo m "
+                         "WHERE m.id = a.id_museo and a.epoca = %s")
+                cursor.execute(query, (epoca,))
+                for row in cursor:
+                    artefatto = row["nome"]
+                    results.append(artefatto)
+                cursor.close()
+                cnx.close()
+                return results
+
+            elif epoca == "Nessun Filtro":
+                query = ("SELECT a.nome "
+                         "FROM artefatto a, museo m "
+                         "WHERE m.id = a.id_museo AND m.nome = %s")
+                cursor.execute(query, (museo,))
+                for row in cursor:
+                    artefatto = row["nome"]
+                    results.append(artefatto)
+                cursor.close()
+                cnx.close()
+                return results
+            else:
+                query = ("SELECT a.nome "
+                         "FROM artefatto a, museo m "
+                         "WHERE m.id = %s AND a.epoca = %s")
+                cursor.execute(query, (museo, epoca,))
+                for row in cursor:
+                    artefatto = row["nome"]
+                    results.append(artefatto)
+                cursor.close()
+                cnx.close()
+                return results
+
 
 
 

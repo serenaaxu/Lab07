@@ -19,42 +19,48 @@ class Controller:
 
     # POPOLA DROPDOWN
     # TODO
-    def popola_dropdowns(self):
-        try:
-            musei = self._model.get_musei()
-            self._view.popola_dd_museo(musei)
+    def popola_dropdown_musei(self):
+        lista_provvisoria = self._model.get_musei()
+        lista_nomi_musei = []
+        lista_nomi_musei.append(ft.DropdownOption("Nessun Filtro"))
 
-            epoche = self._model.get_epoche()
-            self._view.popola_dd_epoca(epoche)
-        except Exception as e:
-            print(f"Errore nel popolamento dei dropdown: {e}")
-            self._view.show_alert(f"Errore nel caricamento dei filtri: {e}")
+        for museo in lista_provvisoria:
+            nome = museo.nome
+            lista_nomi_musei.append(ft.DropdownOption(nome))
+
+        return lista_nomi_musei
+
+    def popola_dropdown_epoche(self):
+        lista_provvisoria = sorted(self._model.get_epoche())
+        lista_epoche = []
+        lista_epoche.append(ft.DropdownOption("Nessun Filtro"))
+
+        for epoca in lista_provvisoria:
+            lista_epoche.append(ft.DropdownOption(epoca))
+
+        return lista_epoche
+
+    # CALLBACK DROPDOWN
+    def aggiorna_nome_museo(self, e):
+        self.museo_selezionato = e.control.value
+    def aggiorna_epoca(self, e):
+        self.epoca_selezionata = e.control.value
 
     # AZIONE: MOSTRA ARTEFATTI
     # TODO
     def handle_mostra_artefatti(self,e):
-        museo_id_selezionato = self._view._dd_musei.value
-        epoca_selezionata = self._view._dd_epoca.value
-
-        try:
-            artefatti_filtrati = self._model.get_artefatti_filtrati(
-                museo_id_selezionato,
-                epoca_selezionata
-            )
-            self._view.aggiorna_risultati(artefatti_filtrati)
-
-            if not artefatti_filtrati:
-                self._view.show_alert("Nessun artefatto trovato con i filtri selezionati.")
-
-        except Exception as e:
-            print(f"Errore durante il filtraggio: {e}")
-            self._view.show_alert(f"Errore: {e}")
-
-
-    # metodo helper
-
-    def get_museo_by_id(self, museo_id):
-        return self._model.get_museo_by_id(museo_id)
+        if self.museo_selezionato == None or self.epoca_selezionata == None:
+            self._view.alert.show_alert("Selezionare filtri")
+        else:
+            self._view.update()
+            lista_artefatti = self._model.get_artefatti_filtrati(self.museo_selezionato, self.epoca_selezionata)
+            if len(lista_artefatti) == 0:
+                self._view.alert.show_alert("Non ci sono artefatti trovati")
+            else:
+                for artefatto in lista_artefatti:
+                    self._view.lista_risultati_ricerca.controls.append(ft.Text(artefatto))
+                self._view.update()
+                self._view.lista_risultati_ricerca.controls.clear()
 
 
 

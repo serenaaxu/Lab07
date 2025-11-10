@@ -11,27 +11,21 @@ class MuseoDAO:
         pass
 
     # TODO
-    def get_all_musei(self):
+    def leggi_musei(self):
         # recupera tutti i musei e li restituisce come lista
+        results = []
         cnx = ConnessioneDB.get_connection()
-        result = []
-        if cnx is None:
-            print("Errore nella connessione al datatbase")
-            return result
 
-        cursor = cnx.cursor(dictionary=True)
-        query = "SELECT id AS id_museo, nome FROM museo ORDER BY nome"
-        try:
-            cursor.execute(query)
-            for row in cursor.fetchall():
-                result.append(MuseoDTO(
-                    row['id_museo'],
-                    row['nome'],
-                ))
-        except Exception as e:
-            print(f"Errore durante l'esecuzione della query: {e}")
-        finally:
+        if cnx is None:
+            print("Errore nella connessione al database")
+            return None
+        else:
+            cursor = cnx.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM museo")
+            for row in cursor:
+                museo = Museo(row["id"], row["nome"], row["tipologia"])
+                results.append(museo)
             cursor.close()
             cnx.close()
-        return result
+            return results
 
