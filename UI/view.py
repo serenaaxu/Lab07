@@ -21,6 +21,14 @@ class View:
         # Controller
         self.controller = None
 
+        ###
+        self._dd_musei = None
+        self._dd_epoca = None
+        self._btn_mostra_artefatti = None
+        self._lv_risultati = None
+        self.txt_titolo = None
+        self.toggle_cambia_tema = None
+
     def show_alert(self, messaggio):
         self.alert.show_alert(messaggio)
 
@@ -37,28 +45,30 @@ class View:
 
         # --- Sezione 2: Filtraggio ---
         # TODO
-        self._dd_musei = ft.Dropdown(label="Musei",
-                                     options=[ft.dropdown.Option(1,"Museo Egizio"),
-                                              ft.dropdown.Option(2,"Museo Nazionale del Cinema"),
-                                              ft.dropdown.Option(2, "Museo d’Arte Orientale (MAO)"),
-                                              ft.dropdown.Option(2, "GAM - Galleria Civica d’Arte Moderna e Contemporanea"),
-                                              ft.dropdown.Option(2, "Museo Nazionale dell’Automobile"),
-                                              ft.dropdown.Option(2, "Museo Nazionale del Risorgimento Italiano"),
-                                              ft.dropdown.Option(2, "Museo della Montagna Duca degli Abruzzi"),
-                                              ft.dropdown.Option(2, "Museo Pietro Micca e dell’Assedio di Torino del 1706"),
-                                              ft.dropdown.Option(2, "Museo di Anatomia Umana Luigi Rolando"),
-                                              ft.dropdown.Option(2, "Museo di Antropologia Criminale Cesare Lombroso"),
-                                              ft.dropdown.Option(2, "Pinacoteca dell’Accademia Albertina"),
-                                              ft.dropdown.Option(2, "Museo della Sindone"),
-                                              ft.dropdown.Option(2, "Museo Ferroviario Piemontese"),
-                                              ],
-                                     width = 300,
-                                     hint_text = "Seleziona Museo")
+        self._dd_musei = ft.Dropdown(
+            label = "Museo",
+            hint_text = "Seleziona un museo",
+            options = [ft.dropdown.Option(key=None, text="Nessun filtro")],
+            width = 350,
+            value = None
+        )
+        self._dd_epoca = ft.Dropdown(
+            label = "Epoca",
+            hint_text = "Seleziona un'epoca'",
+            options = [ft.dropdown.Option(key=None, text="Nessun Filtro")],
+            width = 350,
+            value = None
+        )
 
-        self._dd_epoca = ft.Dropdown(label="Epoca",
-                                     options=[ft.dropdown.Option(1,"Epoca"),])
         # Sezione 3: Artefatti
         # TODO
+        self._btn_mostra_artefatti = ft.ElevatedButton(
+            text = "Mostra Artefatti",
+            on_click = self.controller.handle_mostra_artefatti,
+            # icon = ft.icons.SEARCH
+        )
+
+
 
         # --- Toggle Tema ---
         self.toggle_cambia_tema = ft.Switch(label="Tema scuro", value=True, on_change=self.cambia_tema)
