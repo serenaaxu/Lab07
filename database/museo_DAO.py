@@ -20,14 +20,13 @@ class MuseoDAO:
             return result
 
         cursor = cnx.cursor(dictionary=True)
-        query = "SELECT * FROM museo"
+        query = "SELECT id AS id_museo, nome FROM museo ORDER BY nome"
         try:
             cursor.execute(query)
             for row in cursor.fetchall():
                 result.append(MuseoDTO(
-                    row['id'],
+                    row['id_museo'],
                     row['nome'],
-                    row['tipologia']
                 ))
         except Exception as e:
             print(f"Errore durante l'esecuzione della query: {e}")

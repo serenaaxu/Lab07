@@ -31,7 +31,7 @@ class ArtefattoDAO:
             cnx.close()
         return result
 
-    def get_filtered_artefatti(self, museo_id, epoca):
+    def get_filtered_artefatti(self, id_museo, epoca):
         cnx = ConnessioneDB.get_connection()
         result = []
         if cnx is None:
@@ -39,14 +39,19 @@ class ArtefattoDAO:
             return result
 
         cursor = cnx.cursor(dictionary=True)
-        query = (" SELECT a.* FROM artefatto a "
-                " WHERE a.id_museo = COALESCE(%s, a.id_museo))"
-                " AND a.epoca = COALESCE(%s, a.epoca))")
+        query = (" SELECT a.id AS id_artefatto,"
+                 " a.nome, "
+                 " a.epoca, "
+                 " a.id_museo"
+                 " FROM artefatto a"
+                 " WHERE a.id_museo = COALESCE(%s, a.id_museo)"
+                 " AND a.epoca = COALESCE(%s, a.epoca)"
+                 " ORDER BY a.epoca, a.nome")
 
         try:
-            cursor.execute(query, (museo_id, epoca))
+            cursor.execute(query, (id_museo, epoca))
             for row in cursor.fetchall():
-                result.append(ArtefattoDTO(
+                result.append(Artefatto(
                     row['nome'],
                     row['tipologia'],
                     row['epoca'],
