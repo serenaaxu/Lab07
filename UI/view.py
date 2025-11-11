@@ -21,6 +21,13 @@ class View:
         # Controller
         self.controller = None
 
+        self.txt_titolo = None
+        self._dd_musei = None
+        self._dd_epoca = None
+        self.btn_mostra_artefatti = None
+        self.lista_risultati_ricerca = None
+        self.toggle_cambia_tema = None
+
     def show_alert(self, messaggio):
         self.alert.show_alert(messaggio)
 

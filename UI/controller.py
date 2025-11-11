@@ -21,14 +21,15 @@ class Controller:
     # TODO
     def popola_dropdown_musei(self):
         lista_provvisoria = self._model.get_musei()
-        lista_nomi_musei = []
-        lista_nomi_musei.append(ft.DropdownOption("Nessun Filtro"))
+        lista_opzioni = []
+        lista_opzioni.append(ft.dropdown.Option(key=None, text="Nessun Filtro"))
 
         for museo in lista_provvisoria:
-            nome = museo.nome
-            lista_nomi_musei.append(ft.DropdownOption(nome))
-
-        return lista_nomi_musei
+            lista_opzioni.append(
+                ft.dropdown.Option(key=museo.id,
+                                   text=museo.nome)
+            )
+        return lista_opzioni
 
     def popola_dropdown_epoche(self):
         lista_provvisoria = sorted(self._model.get_epoche())
